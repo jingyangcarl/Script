@@ -1,0 +1,156 @@
+// ScriptForFrameShots
+//////////////////////
+// Environment:
+// Maya 2018;
+//////////////////////
+// Description:
+// This script is used to export obj model of each frame from fbx file, where a $frameStep is used to define the step between each frame;
+//////////////////////
+// Input Data Hierarchy:
+// ./DataRaw
+// ├───model_0
+// │       model_0_anim_0.fbx
+// │       model_0_anim_1.fbx
+// │       ...
+// ├───model_1
+// │       ...
+// ├───model_2
+// │       ...
+// ├───model_3
+// │       ...
+// └───model_4
+//         ...
+// Output Data Hierarchy:
+// ./DataGenerated_FrameShotsWithTexture
+// ├───model_0
+// │   ├───model_0_anim_0
+// │   │   ├───model_0_anim_0_f0
+// │   │   │   └───texture
+// │   │   ├───model_0_anim_0_f1
+// │   │   │   └───texture
+// │   │   ...
+// │   ├───model_0_anim_1
+// │   │   ├───model_0_anim_1_f0
+// │   │   │   └───texture
+// │   │   ├───model_0_anim_1_f1
+// │   │   │   └───texture
+// │   │   ...
+// │   ...
+// ├───model_1
+// │       ...
+// ├───model_2
+// │       ...
+// ├───model_3
+// │       ...
+// └───model_4
+//         ...
+//////////////////////
+
+
+// define scene path;
+string $input = "E:/Data/MIXAMO/DataRaw/";
+string $output = "E:/Data/MIXAMO/DataGenerated_FrameShotsWithTexture/";
+
+// define current frame
+int $frameStep = 1;
+
+// get all model folders
+string $modelList[] = `getFileList -folder $input`;
+
+// loop through all model folders
+for ($model in $modelList){
+
+    // get model number;
+    int $length = size($model);
+    string $modelNumber = `substring $model 7 $length`;
+
+    // define scene path;
+    string $inputFileFolder = $input + "model_" + $modelNumber + "/";
+    string $outputFileFolder = $output + "model_" + $modelNumber + "/";
+
+    // get all fbx files in $inputFileFolder
+    string $fileList[] = `getFileList -folder $inputFileFolder -filespec "*.fbx"`;
+
+    // loop through all fbx files;
+    for ($file in $fileList){
+    
+        // load file
+        string $fileName = basename($file, ".fbx");
+        
+        // generate a folder, the folder is use to store all frames
+        string $outputFileModelFolder = $outputFileFolder + $fileName + "/"; 
+        sysFile -makeDir $outputFileModelFolder;
+
+        // load model
+        performFileDropAction ($inputFileFolder + $file);
+
+        // prepare texture path
+        string $inputFileModelTextureFolder = $inputFileFolder + $fileName + ".fbm/";
+        string $map_Kd_body = "FuseModel_" + $modelNumber + "_Body_Diffuse.png";
+        string $map_Kd_bottom = "FuseModel_" + $modelNumber + "_Bottom_Diffuse.png";
+        string $map_Kd_hair = "FuseModel_" + $modelNumber + "_Hair_Diffuse.png";
+        string $map_Kd_shoes = "FuseModel_" + $modelNumber + "_Shoes_Diffuse.png";
+        string $map_Kd_top = "FuseModel_" + $modelNumber + "_Top_Diffuse.png";
+        string $map_Ks_body = "FuseModel_" + $modelNumber + "_Body_Specular.png";
+        string $map_Ks_bottom = "FuseModel_" + $modelNumber + "_Bottom_Specular.png";
+        string $map_Ks_hair = "FuseModel_" + $modelNumber + "_Hair_Specular.png";
+        string $map_Ks_shoes = "FuseModel_" + $modelNumber + "_Shoes_Specular.png";
+        string $map_Ks_top = "FuseModel_" + $modelNumber + "_Top_Specular.png";
+
+        // look through frames
+        for ($i = 0; $i < 18/$frameStep; $i++){
+
+            // go to next frame
+            int $currentFrame = $i*$frameStep;
+            currentTime $currentFrame;
+
+            // generate a folder for frame models
+            string $outputFileFrameFolder = $outputFileModelFolder + $fileName + "_f" + $currentFrame + "/";
+            sysFile -makeDir $outputFileFrameFolder;
+
+            // save frame model obj
+            file -force -options "groups=1;ptgroups=1;materials=1;smoothing=1;normals=1" -type "OBJexport" -pr -ea ($outputFileFrameFolder + $fileName + "_f" + $currentFrame + ".fbx");
+
+            // generate a folder for saving textures
+            string $outputFileFrameTextureFolder = $outputFileFrameFolder + "texture/";
+            sysFile -makeDir $outputFileFrameTextureFolder;
+
+            // save textures from source folder if texture exists
+            if (`filetest -f ($inputFileModelTextureFolder + $map_Kd_body)`) {
+                sysFile -copy ($outputFileFrameTextureFolder + $map_Kd_body) ($inputFileModelTextureFolder + $map_Kd_body);
+            }
+            if (`filetest -f ($inputFileModelTextureFolder + $map_Kd_bottom)`) {
+                sysFile -copy ($outputFileFrameTextureFolder + $map_Kd_bottom) ($inputFileModelTextureFolder + $map_Kd_bottom);
+            }
+            if (`filetest -f ($inputFileModelTextureFolder + $map_Kd_hair)`) {
+                sysFile -copy ($outputFileFrameTextureFolder + $map_Kd_hair) ($inputFileModelTextureFolder + $map_Kd_hair);
+            }
+            if (`filetest -f ($inputFileModelTextureFolder + $map_Kd_shoes)`) {
+                sysFile -copy ($outputFileFrameTextureFolder + $map_Kd_shoes) ($inputFileModelTextureFolder + $map_Kd_shoes);
+            }
+            if (`filetest -f ($inputFileModelTextureFolder + $map_Kd_top)`) {
+                sysFile -copy ($outputFileFrameTextureFolder + $map_Kd_top) ($inputFileModelTextureFolder + $map_Kd_top);
+            }
+            if (`filetest -f ($inputFileModelTextureFolder + $map_Ks_body)`) {
+                sysFile -copy ($outputFileFrameTextureFolder + $map_Ks_body) ($inputFileModelTextureFolder + $map_Ks_body);
+            }
+            if (`filetest -f ($inputFileModelTextureFolder + $map_Ks_bottom)`) {
+                sysFile -copy ($outputFileFrameTextureFolder + $map_Ks_bottom) ($inputFileModelTextureFolder + $map_Ks_bottom);
+            }
+            if (`filetest -f ($inputFileModelTextureFolder + $map_Ks_hair)`) {
+                sysFile -copy ($outputFileFrameTextureFolder + $map_Ks_hair) ($inputFileModelTextureFolder + $map_Ks_hair);
+            }
+            if (`filetest -f ($inputFileModelTextureFolder + $map_Ks_shoes)`) {
+                sysFile -copy ($outputFileFrameTextureFolder + $map_Ks_shoes) ($inputFileModelTextureFolder + $map_Ks_shoes);
+            }
+            if (`filetest -f ($inputFileModelTextureFolder + $map_Ks_top)`) {
+                sysFile -copy ($outputFileFrameTextureFolder + $map_Ks_top) ($inputFileModelTextureFolder + $map_Ks_top);
+            }
+        }
+        
+        // delete object and prepare for the next
+        select -all;
+        doDelete;
+    }
+
+}
