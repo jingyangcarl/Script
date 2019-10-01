@@ -1,8 +1,66 @@
-
+# ScriptForAddingTextureMap
+###########################
+# Environment:
+# Python 2.7.13
+###########################
+# Description:
+# This script is used to add diffuse map and specular map path to Maya exported .mtl file, where the textures have to be saved in the hierarchy introduced below.
+###########################
+# Input Data Hierarchy:
+# ./DataGenerated_FrameShotsWithTexture
+# ├───model_0
+# │   ├───model_0_anim_0
+# │   │   ├───model_0_anim_0_f0
+# │   │   │   └───texture
+# │   │   ├───model_0_anim_0_f1
+# │   │   │   └───texture
+# │   │   ...
+# │   ├───model_0_anim_1
+# │   │   ├───model_0_anim_1_f0
+# │   │   │   └───texture
+# │   │   ├───model_0_anim_1_f1
+# │   │   │   └───texture
+# │   │   ...
+# │   ...
+# ├───model_1
+# │       ...
+# ├───model_2
+# │       ...
+# ├───model_3
+# │       ...
+# └───model_4
+#         ...
+###########################
+# Output Data Hierarchy:
+# ./DataGenerated_FrameShotsWithTexture
+# ├───model_0
+# │   ├───model_0_anim_0
+# │   │   ├───model_0_anim_0_f0
+# │   │   │   └───texture
+# │   │   ├───model_0_anim_0_f1
+# │   │   │   └───texture
+# │   │   ...
+# │   ├───model_0_anim_1
+# │   │   ├───model_0_anim_1_f0
+# │   │   │   └───texture
+# │   │   ├───model_0_anim_1_f1
+# │   │   │   └───texture
+# │   │   ...
+# │   ...
+# ├───model_1
+# │       ...
+# ├───model_2
+# │       ...
+# ├───model_3
+# │       ...
+# └───model_4
+#         ...
+###########################
 
 import os
 import re
 
+# define input folder
 inputModelFolder = 'E:/Data/MIXAMO/DataGenerated_FrameShotsWithTexture/'
 
 files = []
