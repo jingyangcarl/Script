@@ -90,7 +90,14 @@ for file in fileHierarchyDic:
 #############################################
 # generate Readme content using preorder traversal
 
-def generateMarkDown(fileName, markdown):
+# Description:
+# This function is used to generate markdown content of a cpp source file in hierarchy structure
+# Input:
+# @ fileName: input cpp source file
+# @ markdown: output markdown content
+# Output:
+# @ void: return value
+def generateCppMarkDown(fileName, markdown):
 
     filePath = filePathDic[fileName.lower()]
 
@@ -136,20 +143,20 @@ def traversal(node, layerStr, markdown):
     if node is None: return
     if node.children is None:
         # traversal leaf node
-        markdown.append(layerStr + ' ')
-        markdown.append(layerStr + ' ' + node.name)
         subMarkdown = []
-        generateMarkDown(node.name, subMarkdown)
+        markdown.append(layerStr + ' ' + node.name)
+        generateCppMarkDown(node.name, subMarkdown)
 
         for line in subMarkdown:
             markdown.append(layerStr + '> ')
             markdown.append(layerStr + '> ' + line)
 
+        markdown.append(layerStr + ' ')
         return
     
     # traversal the node
-    markdown.append(layerStr + ' ')
     markdown.append(layerStr + ' ' + node.name)
+    markdown.append(layerStr + ' ')
 
     # traveral through child node
     for childNode in node.children:
