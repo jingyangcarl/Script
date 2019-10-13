@@ -2,6 +2,7 @@ import os
 import re
 
 projectFolder = 'D:/CSCI580/Homework4/'
+projectFolder = 'D:/Code/SphericalHarmonicsLighting'
 
 #############################################################
 # fill filePathDic, fileHierarchyDic
@@ -11,6 +12,12 @@ projectFolder = 'D:/CSCI580/Homework4/'
 # generate project tree
 filePathDic = {}
 fileHierarchyDic = {}
+
+# set file format to be processed
+extension = {
+    '.h',
+    '.cpp'
+}
 
 # walk through all files in projectFolder and find all files
 # r = root, d = directories, f = files
@@ -26,24 +33,24 @@ for r, d, f in os.walk(projectFolder):
                     if 'Include=' in line:
                         # the string after Include= is nodes in solution hierarchy
                         if 'Filter' in content[index+1]:
-                            # the string
+                            # for leaf nodes
+                            # extract leafFile from <... Include="leafFile">
                             leafFile = re.search(r'\".*\"',line).group(0).replace('\"', '', 2)
+                            # extract pathToLeaf from <Filter>pathToLeaf</Filter>
                             pathToLeaf = re.search(r'>.*<', content[index+1]).group(0).replace('>', '').replace('<', '/')
+                            # replace '\\' with '/'
+                            pathToLeaf = pathToLeaf.replace('\\', '/')
 
+                            # add to hierarchy dictionary
                             leafFileName, leafFileExtension = os.path.splitext(leafFile)
-                            if leafFileExtension == '.h':
-                                fileHierarchyDic[leafFile] = pathToLeaf + leafFile
-                            if leafFileExtension == '.cpp':
-                                fileHierarchyDic[leafFile] = pathToLeaf + leafFile
+                            if leafFileExtension in extension:
+                                fileHierarchyDic[leafFile.lower()] = pathToLeaf + leafFile
                         else:
-                            #
+                            # other than leaf nodes
                             node = re.search(r'\".*\"', line).group(0).replace('\"', '', 2)
-                            head = os.path.split(node)[0]
-                            tail = os.path.split(node)[1]
-        if fileExtension == '.h':
-            filePathDic[file] = os.path.join(r, file)
-        if fileExtension == '.cpp':
-            filePathDic[file] = os.path.join(r, file)
+        # add to path dictionary
+        if fileExtension in extension:
+            filePathDic[file.lower()] = os.path.join(r, file)
 
 #############################################################
 # generate solution hierarchy tree using fileHierarchyDic
@@ -83,10 +90,13 @@ for file in fileHierarchyDic:
 #############################################
 # generate Readme content using preorder traversal
 
-def generateMarkDown(fileName):
-    filePath = filePathDic[fileName]
+def generateMarkDown(fileName, markdown):
 
-    markdown = []
+    filePath = filePathDic[fileName.lower()]
+
+    # concat comments
+    description = ''
+    function = ''
 
     # read .cpp file and extract descriptions
     with open(filePath) as cppFile:
@@ -94,37 +104,58 @@ def generateMarkDown(fileName):
 
         for index, line in enumerate(content):
             # loop through all functions
-            if line.strip() == '\\*':
-                # locate the number of lines of description part
-                length = 0
-                for i in range(1, 20):
-                    if 'Input' in content[index + length]:
-                        length = i
-                        break
-
-                # concat comments
-                description = ''
-                for i in range(1, length-1):
-                    description += content[i]
-
-                markdown.append(description)
+            if line.strip() == '/*':
+                # the comments may be a description comments
+                if 'Description:' in content[index+1]:
+                    # locate the number of lines of description part
+                    length = 0
+                    for i in range(2, 20):
+                        if 'Input:' in content[index + i]:
+                            length = i
+                            break
+                        if '*/' in content[index + i]:
+                            length = i
+                            break
+                    
+                    for i in range(2, length):
+                        description += content[index + i].strip()
+                        if not description.endswith(';'):
+                            description += ';'
+                        #markdown.append(description)
 
             if line.strip() == '*/':
-                function = content[index+1].replace('{', '').strip()
+                # locate function statement
+                if '::' in content[index+1]:
+                    function = content[index+1].replace('{', '').strip()
+                    function = function.replace(' :', '').strip()
+                    markdown.append(function + ': ' + description)
+                    description = ''
 
-                markdown.append(function)
 
-        print(markdown)
-        print()
-
-def traversal(node):
+def traversal(node, layerStr, markdown):
     if node is None: return
     if node.children is None:
-        print(node.name)
-        generateMarkDown(node.name)
+        # traversal leaf node
+        markdown.append(layerStr + ' ')
+        markdown.append(layerStr + ' ' + node.name)
+        subMarkdown = []
+        generateMarkDown(node.name, subMarkdown)
+
+        for line in subMarkdown:
+            markdown.append(layerStr + '> ')
+            markdown.append(layerStr + '> ' + line)
+
         return
+    
+    # traversal the node
+    markdown.append(layerStr + ' ')
+    markdown.append(layerStr + ' ' + node.name)
+
+    # traveral through child node
     for childNode in node.children:
-        traversal(childNode)
+        traversal(childNode, layerStr + '>', markdown)
 
-traversal(hierarchy)
-
+markdown = []
+traversal(hierarchy, '', markdown)
+for line in markdown:
+    print(line)
