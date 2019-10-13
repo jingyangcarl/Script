@@ -84,13 +84,44 @@ for file in fileHierarchyDic:
 # generate Readme content using preorder traversal
 
 def generateMarkDown(fileName):
-    path = filePathDic[fileName]
+    filePath = filePathDic[fileName]
 
+    markdown = []
+
+    # read .cpp file and extract descriptions
+    with open(filePath) as cppFile:
+        content = cppFile.read().splitlines()
+
+        for index, line in enumerate(content):
+            # loop through all functions
+            if line.strip() == '\\*':
+                # locate the number of lines of description part
+                length = 0
+                for i in range(1, 20):
+                    if 'Input' in content[index + length]:
+                        length = i
+                        break
+
+                # concat comments
+                description = ''
+                for i in range(1, length-1):
+                    description += content[i]
+
+                markdown.append(description)
+
+            if line.strip() == '*/':
+                function = content[index+1].replace('{', '').strip()
+
+                markdown.append(function)
+
+        print(markdown)
+        print()
 
 def traversal(node):
     if node is None: return
     if node.children is None:
         print(node.name)
+        generateMarkDown(node.name)
         return
     for childNode in node.children:
         traversal(childNode)
