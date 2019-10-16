@@ -1,9 +1,38 @@
+import platform
 import os
 import re
 
-projectFolder = 'D:/CSCI580/Homework4/'
-projectFolder = 'D:/Code/SphericalHarmonicsLighting'
 
+markdown = []
+
+projectFolder = 'D:/CSCI580/Homework5/'
+
+#############################################################
+## Solution Results
+#############################################################
+markdown.append('## Solution Results:')
+markdown.append('TODO: WRITE DOWN SOLUTION RESULTS')
+markdown.append('')
+
+#############################################################
+## Solution Introduction
+#############################################################
+markdown.append('## Solution Introduction:')
+markdown.append('TODO: WRITE DOWN SOLUTION Introduction')
+markdown.append('')
+
+#############################################################
+## Solution Environment
+#############################################################
+markdown.append('## Solution Environment')
+markdown.append('Machine:\t' + platform.machine())
+markdown.append('Processor:\t' + platform.processor())
+markdown.append('Platform:\t' + platform.platform())
+markdown.append('TODO: WRITE DOWN ALL THE LIBRARIES AND IDE')
+markdown.append('')
+
+#############################################################
+## Solution Documentation
 #############################################################
 # fill filePathDic, fileHierarchyDic
 # where filePathDic is used to save files absolute path on the machine,
@@ -60,7 +89,7 @@ class TreeNode(object):
         self.name = name
         self.children = children
 
-hierarchy = TreeNode('Root')
+hierarchy = TreeNode('root')
 for file in fileHierarchyDic:
     currentNode = hierarchy
     nodeNames = fileHierarchyDic[file].split('/')
@@ -128,11 +157,10 @@ def generateCppMarkDown(fileName, markdown):
                         description += content[index + i].strip()
                         if not description.endswith(';'):
                             description += ';'
-                        #markdown.append(description)
 
             if line.strip() == '*/':
                 # locate function statement
-                if '::' in content[index+1]:
+                if '::' in content[index+1] and ';' not in content[index+1]:
                     function = content[index+1].replace('{', '').strip()
                     function = function.replace(' :', '').strip()
                     markdown.append(function + ': ' + description)
@@ -155,14 +183,29 @@ def traversal(node, layerStr, markdown):
         return
     
     # traversal the node
-    markdown.append(layerStr + ' ' + node.name)
-    markdown.append(layerStr + ' ')
+    if node.name is not 'root':
+        markdown.append(layerStr + ' ' + node.name)
+        markdown.append(layerStr + ' ')
 
     # traveral through child node
     for childNode in node.children:
         traversal(childNode, layerStr + '>', markdown)
 
-markdown = []
+markdown.append('## Solution Documentation: ')
 traversal(hierarchy, '', markdown)
+markdown.append('')
+
+#############################################################
+## Solution Hierarchy:
+#############################################################
+markdown.append('## Solution Hierarchy: ')
+
+markdown.append('')
+
+
+
+
+
+
 for line in markdown:
     print(line)
