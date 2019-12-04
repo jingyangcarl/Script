@@ -31,11 +31,13 @@
 # │       │       patch_0_144.exr
 # │       │       patch_0_192.exr
 # │       │       ...
+# │       │
 # │       ├───20181212_LocHuynh_01_specular_unlit
 # │       │       patch_0_0.exr
 # │       │       patch_0_144.exr
 # │       │       patch_0_192.exr
 # │       │       ...
+# │       │
 # │ 		...
 # └───OldLightStageData
 #     └───SpecularUnlit
@@ -43,12 +45,14 @@
 #         │       patch_0_0.exr
 #         │       patch_0_144.exr
 #         │       patch_0_192.exr
+#         │
 #         │       ...
 #         ├───201170115_Adair_01_0_specular_unlit
 #         │       patch_0_0.exr
 #         │       patch_0_144.exr
 #         │       patch_0_192.exr
 #         │       ...
+#         │
 #         ...
 ###########################
 
