@@ -1,3 +1,57 @@
+# Script2CutImage
+###########################
+# Environment
+# Python 3.7.4
+###########################
+# Description
+# This script is used to cut image to patches in order
+###########################
+# Input Data Hierarchy:
+# ./RawData
+# ├───LightStageData
+# │   └───SpecularUnlit
+# │           20181212_LocHuynh_00_specular_unlit.exr
+# │           20181212_LocHuynh_01_specular_unlit.exr
+# │           20181212_LocHuynh_02_specular_unlit.exr
+# │			...
+# │
+# └───OldLightStageData
+#     └───SpecularUnlit
+#             201170115_Adair_00_1_specular_unlit.exr
+#             201170115_Adair_01_0_specular_unlit.exr
+#             201170115_Adair_02_0_specular_unlit.exr
+#             ...
+###########################
+# Output Data Hierarchy:
+# ./ImageCut48
+# ├───LightStageData
+# │   └───SpecularUnlit
+# │       ├───20181212_LocHuynh_00_specular_unlit
+# │       │       patch_0_0.exr
+# │       │       patch_0_144.exr
+# │       │       patch_0_192.exr
+# │       │       ...
+# │       ├───20181212_LocHuynh_01_specular_unlit
+# │       │       patch_0_0.exr
+# │       │       patch_0_144.exr
+# │       │       patch_0_192.exr
+# │       │       ...
+# │ 		...
+# └───OldLightStageData
+#     └───SpecularUnlit
+#         ├───201170115_Adair_00_1_specular_unlit
+#         │       patch_0_0.exr
+#         │       patch_0_144.exr
+#         │       patch_0_192.exr
+#         │       ...
+#         ├───201170115_Adair_01_0_specular_unlit
+#         │       patch_0_0.exr
+#         │       patch_0_144.exr
+#         │       patch_0_192.exr
+#         │       ...
+#         ...
+###########################
+
 import imageio
 import os
 import cv2
