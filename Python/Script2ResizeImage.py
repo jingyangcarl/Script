@@ -29,10 +29,10 @@ import imageio
 import os
 import cv2
 
-inputRootFolder = 'F:/Data/Calibration/Full Body Scan/1944'
-outputRootFolder = 'F:/Data/Calibration/Full Body Scan/243'
+inputRootFolder = 'F:/Data/Calibration/Full Body Scan - A Pose/2464'
+outputRootFolder = 'F:/Data/Calibration/Full Body Scan - A Pose/821'
 
-resizeFactor = 8
+resizeFactor = 3
 
 for r, d, f in os.walk(inputRootFolder):
     for file in f:
