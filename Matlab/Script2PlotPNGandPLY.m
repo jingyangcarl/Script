@@ -1,0 +1,32 @@
+depth_orig001 = imread('depth_orig001.png');
+depth_orig002 = imread('depth_orig002.png');
+depth_orig003 = imread('depth_orig003.png');
+depth_orig004 = imread('depth_orig004.png');
+depth_orig005 = imread('depth_orig005.png');
+labels001 = imread('labels001.png');
+labels002 = imread('labels002.png');
+labels003 = imread('labels003.png');
+labels004 = imread('labels004.png');
+labels005 = imread('labels005.png');
+point_cloud001 = pcread('point_cloud001.ply');
+point_cloud002 = pcread('point_cloud002.ply');
+point_cloud003 = pcread('point_cloud003.ply');
+point_cloud004 = pcread('point_cloud004.ply');
+point_cloud005 = pcread('point_cloud005.ply');
+
+subplot(3, 5, 1), imshow(depth_orig001);
+subplot(3, 5, 2), imshow(depth_orig002);
+subplot(3, 5, 3), imshow(depth_orig003);
+subplot(3, 5, 4), imshow(depth_orig004);
+subplot(3, 5, 5), imshow(depth_orig005);
+subplot(3, 5, 6), imshow(labels001);
+subplot(3, 5, 7), imshow(labels002);
+subplot(3, 5, 8), imshow(labels003);
+subplot(3, 5, 9), imshow(labels004);
+subplot(3, 5, 10), imshow(labels005);
+subplot(3, 5, 11), pcshow(point_cloud001);
+subplot(3, 5, 12), pcshow(point_cloud002);
+subplot(3, 5, 13), pcshow(point_cloud003);
+subplot(3, 5, 14), pcshow(point_cloud004);
+subplot(3, 5, 15), pcshow(point_cloud005);
+
