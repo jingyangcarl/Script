@@ -34,7 +34,7 @@ imshow(rescale(diff_disparity_depthReconstructed));
 title('Diff on Disparity and Reconstructed Depth');
 subplot(2, 3, 5);
 imshow(rescale(diff_depth_depthReconstructed));
-title('Rescaled Diff');
+title('Diff on Depth and Reconstructed Depth');
 subplot(2, 3, 6);
 histogram(rescale(diff_depth_depthReconstructed));
 title('Diff Histogram');
