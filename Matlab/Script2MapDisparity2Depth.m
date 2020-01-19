@@ -2,17 +2,17 @@
 clear all;
 
 %% load images
-depth_L = double(rgb2gray(imread('D415.IR.L.R(+22.5d).up.png')));
+depth_L = double(rgb2gray(imread('D415.01.IR.L.png')));
 
 %% set parameters
 focalLenth = 1.88; % mm
 baseline = 55; % mm
 
 %% get disparity map using depth value
-disparity_L = rescale(1.88./(55.*depth_L));
+disparity_L = (focalLenth * baseline) ./ depth_L;
 
 %% recalculate depth map using disparity
-depth_L_reconstruct = rescale(1.88./55.*disparity_L);
+depth_L_reconstruct = rescale((focalLenth * baseline) ./ disparity_L);
 
 %% calculate the difference
 diff_disparity_depthReconstruct_L = disparity_L - depth_L_reconstruct;
@@ -23,7 +23,7 @@ subplot(2, 3, 1);
 imshow(rescale(depth_L));
 title('Depth Image');
 subplot(2, 3, 2);
-imshow(disparity_L);
+imshow(rescale(disparity_L));
 title('Disparity Image');
 subplot(2, 3, 3);
 imshow(depth_L_reconstruct);
