@@ -1,0 +1,38 @@
+import bpy
+import numpy as np
+import mathutils
+# document: https://docs.blender.org/api/current/mathutils.html
+
+plyFilePath = '/Users/jyang/Documents/Data/rgbd-scenes-v2_pc/rgbd-scenes-v2/pc/01.ply'
+#bpy.ops.import_mesh.ply(filepath=plyFilePath)
+
+cameraFilePath = '/Users/jyang/Documents/Data/rgbd-scenes-v2_pc/rgbd-scenes-v2/pc/01.pose'
+cameraTable = np.loadtxt(cameraFilePath)
+cameras_r = cameraTable[:,0:4]
+cameras_xyz = cameraTable[:,4:7]
+
+cameras = {}
+cameras_obj = {}
+
+for i in range(0, cameraTable.shape[0], 88):
+    try:
+        # set camera name
+        camera_name = 'Camera ' + str(i)
+        # create camera
+        cameras[i] = bpy.data.cameras.new(camera_name)
+        cameras[i].lens = 18
+        # create camera object
+        cameras_obj[i] = bpy.data.objects.new(camera_name, cameras[i])
+        cameras_obj[i].location = cameras_xyz[i]
+        cameras_obj[i].rotation_mode = 'XYZ'
+        cameras_obj[i].rotation_euler = mathutils.Quaternion(cameras_r[i]).to_euler('XYZ')
+        # here just need to add a local transformation around x for 180 degrees
+        # add camera object to scene
+        bpy.context.scene.collection.objects.link(cameras_obj[i])
+    except e:
+        print(e)
+
+# remove all cameras
+for camera_obj_index in cameras_obj:
+    #bpy.context.scene.collection.objects.unlink(cameras_obj[camera_obj_index])
+    pass
