@@ -1,3 +1,3 @@
 Matlab Script
 ---
-* script@MergePointCloudFromMultiView.m
+* script2MergePointCloudFromMultiView.m
