@@ -2,7 +2,7 @@ clear all;
 close all;
 
 %% set parameters
-input_dir = 'D:/Data/MIXAMO/generated_frames_rendered/all/640_480/model_0/model_0_anim_0/model_0_anim_0_f0/';
+input_dir = 'D:/Data/MIXAMO/generated_frames_rendered/model_0/model_0_anim_0/model_0_anim_0_f0/';
 height = 480;
 width = 640;
 view_num = 16;
@@ -25,17 +25,17 @@ rts_color = rts(3:3:end, :);
 clear rts_table;
 
 % depth and color images
-images_depth_left_png = zeros(height, width, view_num, 'uint16');
+% images_depth_left_png = zeros(height, width, view_num, 'uint16');
 images_depth_left_exr = zeros(height, width, view_num, 'single');
-images_depth_right_png = zeros(height, width, view_num, 'uint16');
+% images_depth_right_png = zeros(height, width, view_num, 'uint16');
 images_depth_right_exr = zeros(height, width, view_num, 'single');
-images_color = zeros(height, width, 3, view_num, 'uint8');
+% images_color = zeros(height, width, 3, view_num, 'uint8');
 for i = 1:view_num
-    images_depth_left_png(:,:,i) = imread(strcat(input_dir, 'D415.', sprintf('%02d',i), '.IR.L.png'));
+%     images_depth_left_png(:,:,i) = imread(strcat(input_dir, 'D415.', sprintf('%02d',i), '.IR.L.png'));
     images_depth_left_exr(:,:,i) = rgb2gray(exrread(strcat(input_dir, 'D415.', sprintf('%02d',i), '.IR.L.exr')));
-    images_depth_right_png(:,:,i) = imread(strcat(input_dir, 'D415.', sprintf('%02d',i), '.IR.R.png'));
+%     images_depth_right_png(:,:,i) = imread(strcat(input_dir, 'D415.', sprintf('%02d',i), '.IR.R.png'));
     images_depth_right_exr(:,:,i) = rgb2gray(exrread(strcat(input_dir, 'D415.', sprintf('%02d',i), '.IR.R.exr')));
-    images_color(:,:,:,i) = imread(strcat(input_dir, 'D415.', sprintf('%02d',i), '.RGB.png'));
+%     images_color(:,:,:,i) = imread(strcat(input_dir, 'D415.', sprintf('%02d',i), '.RGB.png'));
 end
 
 % point cloud
@@ -63,7 +63,7 @@ for i = 1:view_num
     r_color = quaternion(rts_color(i, 1:4)) * quaternion([0.0, 0.0, 1.0, 0.0]) * quaternion([0.0, 0.0, 0.0, 1.0]);
     plotCamera('Label', sprintf('%02d',i), 'Location', t_depth_left, 'Orientation', quat2rotm(r_depth_left)', 'Size', 0.05, 'Color', [1 0 0]);
     plotCamera('Label', sprintf('%02d',i), 'Location', t_depth_right, 'Orientation', quat2rotm(r_depth_right)', 'Size', 0.05, 'Color', [0 0 1]);
-    plotCamera('Label', sprintf('%02d',i), 'Location', t_color, 'Orientation', quat2rotm(r_color)', 'Size', 0.05, 'Color', [0 1 0]);
+%     plotCamera('Label', sprintf('%02d',i), 'Location', t_color, 'Orientation', quat2rotm(r_color)', 'Size', 0.05, 'Color', [0 1 0]);
     hold on;
 end
 
