@@ -2,7 +2,7 @@ clear all;
 close all;
 
 %% set parameters
-input_dir = 'D:/Data/MIXAMO/generated_frames_rendered/model_0/model_0_anim_0/model_0_anim_0_f0/';
+input_dir = 'D:/Data/MIXAMO/generated_frames_rendered/cl_no8020_ir_4c/640_480/model_0/model_0_anim_0/model_0_anim_0_f0/';
 height = 480;
 width = 640;
 view_num = 16;
@@ -63,7 +63,7 @@ for i = 1:view_num
     r_color = quaternion(rts_color(i, 1:4)) * quaternion([0.0, 0.0, 1.0, 0.0]) * quaternion([0.0, 0.0, 0.0, 1.0]);
     plotCamera('Label', sprintf('%02d',i), 'Location', t_depth_left, 'Orientation', quat2rotm(r_depth_left)', 'Size', 0.05, 'Color', [1 0 0]);
     plotCamera('Label', sprintf('%02d',i), 'Location', t_depth_right, 'Orientation', quat2rotm(r_depth_right)', 'Size', 0.05, 'Color', [0 0 1]);
-%     plotCamera('Label', sprintf('%02d',i), 'Location', t_color, 'Orientation', quat2rotm(r_color)', 'Size', 0.05, 'Color', [0 1 0]);
+    plotCamera('Label', sprintf('%02d',i), 'Location', t_color, 'Orientation', quat2rotm(r_color)', 'Size', 0.05, 'Color', [0 1 0]);
     hold on;
 end
 
@@ -99,30 +99,34 @@ end
 json_obj = struct;
 json_obj.camera_angle_x = 1.2112585306167603;
 json_obj.frames = [];
+mode = 'depth';
 for i = 1:view_num
-    % write rgb frame file_path
-    json_obj.frames(i).file_path = sprintf('./train/r_%d',i-1);
-    % write rgb frame rotation
-    json_obj.frames(i).rotation = 0.012566370614359171; % rotation here is a arbitrary value
-    % write rgb transform matrix
-    json_obj.frames(i).transform_matrix = quat2tform(rts_color(i,1:4));
-    json_obj.frames(i).transform_matrix(1:3,4) = rts_color(i, end-2:end);
-    
-%     json_obj.frames(i).file_path = sprintf('./train/r_%d',i);
-%     json_obj.frames(i+view_num).file_path = sprintf('./train/r_%d',2*i);
-%     json_obj.frames(i).rotation = 0.012566370614359171; % rotation here is a arbitrary value
-%     json_obj.frames(i+view_num).rotation = 0.012566370614359171; % rotation here is a arbitrary value
-    
-    % prepare transform matrix
-%     json_obj.frames(i).transform_matrix = quat2tform(rts_depth_left(i, 1:4));
-%     json_obj.frames(i).transform_matrix(1:3,4) = rts_depth_left(i, end-2:end);
-%     json_obj.frames(i+view_num).transform_matrix = quat2tform(rts_depth_right(i, 1:4));
-%     json_obj.frames(i+view_num).transform_matrix(1:3,4) = rts_depth_right(i, end-2:end);
+    if strcmp(mode, 'rgb')
+        % write rgb frame file_path
+        json_obj.frames(i).file_path = sprintf('./train/r_%d',i-1);
+        % write rgb frame rotation
+        json_obj.frames(i).rotation = 0.012566370614359171; % rotation here is a arbitrary value
+        % write rgb transform matrix
+        json_obj.frames(i).transform_matrix = quat2tform(rts_color(i,1:4));
+        json_obj.frames(i).transform_matrix(1:3,4) = rts_color(i, end-2:end);
+    elseif strcmp(mode, 'depth')
+        % write depth frame file_path
+        json_obj.frames(i).file_path = sprintf('./depth_train/D415.%02d.IR.L', i);
+        json_obj.frames(i+view_num).file_path = sprintf('./depth_train/D415.%02d.IR.R', i);
+        % write depth frame rotation
+        json_obj.frames(i).rotation = 0.012566370614359171; % rotation here is a arbitrary value
+        json_obj.frames(i+view_num).rotation = 0.012566370614359171; % rotation here is a arbitrary value
+        % write rgb transform matrix
+        json_obj.frames(i).transform_matrix = quat2tform(rts_depth_left(i,1:4));
+        json_obj.frames(i+view_num).transform_matrix = quat2tform(rts_depth_right(i,1:4));
+        json_obj.frames(i).transform_matrix(1:3,4) = rts_depth_left(i, end-2:end);
+        json_obj.frames(i+view_num).transform_matrix(1:3,4) = rts_depth_right(i, end-2:end);
+    end
 end
 json = jsonencode(json_obj);
 
 %write json file
-f_name = "transforms_train_miaxmo.json";
-f_id = fopen(f_name, 'w');
-fprintf(f_id, '%s', json);
-fclose(f_id);
+% f_name = "transforms.json";
+% f_id = fopen(f_name, 'w');
+% fprintf(f_id, '%s', json);
+% fclose(f_id);

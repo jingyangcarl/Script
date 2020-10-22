@@ -46,7 +46,7 @@ for i = 1:len
     colormap default;
     cmap = colormap;
     
-    camera_list(i) = plotCamera('Label', string(regexp(file_path_list(i), '\d*', 'match')), 'Location', t, 'Orientation', quat2rotm(r)', 'Size', 0.05, 'Color', cmap(round(i/len*size(cmap, 1)),:));
+    camera_list(i) = plotCamera('Label', file_path_list(i), 'Location', t, 'Orientation', quat2rotm(r)', 'Size', 0.05, 'Color', cmap(round(i/len*size(cmap, 1)),:));
     hold on;
 end
 
