@@ -7,6 +7,7 @@ if __name__ == "__main__":
     # define path
     hdr_folder = 'D:/data/lightProbe/Original/hdr/'
     png_folder = 'D:/data/lightProbe/Original/png/'
+    format = '.jpg'
 
     # walk through
     for r, d, f in os.walk(hdr_folder):
@@ -20,8 +21,8 @@ if __name__ == "__main__":
                 hdr = cv2.imread(hdr_path, flags=cv2.IMREAD_ANYDEPTH)
 
                 # convert to 6 sided cube map
-                hdr_cubemap = py360convert.e2c(hdr, face_w=800, mode='bilinear', cube_format='dice')
-                hdr_cubes = py360convert.e2c(hdr, face_w=800, mode='bilinear', cube_format='dict')
+                hdr_cubemap = py360convert.e2c(hdr, face_w=2048, mode='bilinear', cube_format='dice')
+                hdr_cubes = py360convert.e2c(hdr, face_w=2048, mode='bilinear', cube_format='dict')
 
                 # convert to ldr
                 img_equirectangular = np.clip(hdr * 255, 0, 255).astype('uint8')
@@ -36,22 +37,22 @@ if __name__ == "__main__":
                 # output equirectangular
                 path_equirectangular = png_folder + 'equirectangular/'
                 os.makedirs(path_equirectangular, exist_ok=True)
-                cv2.imwrite(path_equirectangular + filename + '.jpg', img_equirectangular)
+                cv2.imwrite(path_equirectangular + filename + format, img_equirectangular)
                 print('Equirectangular for', filename, 'saved')
 
                 # output cubemap
                 path_cubemap = png_folder + 'cubemap/'
                 os.makedirs(path_cubemap, exist_ok=True)
-                cv2.imwrite(path_cubemap + filename + '.jpg', img_cubemap)
+                cv2.imwrite(path_cubemap + filename + format, img_cubemap)
                 print('Cubemap for', filename, 'saved')
 
                 # output decomposed cube
                 path_decompose = png_folder + 'decomposed/' + filename + '/'
                 os.makedirs(path_decompose, exist_ok=True)
-                cv2.imwrite(path_decompose + 'posx.jpg', img_posx)
-                cv2.imwrite(path_decompose + 'negx.jpg', img_negx)
-                cv2.imwrite(path_decompose + 'posy.jpg', img_posy)
-                cv2.imwrite(path_decompose + 'negy.jpg', img_negy)
-                cv2.imwrite(path_decompose + 'posz.jpg', img_posz)
-                cv2.imwrite(path_decompose + 'negz.jpg', img_negz)
+                cv2.imwrite(path_decompose + 'posx' + format, cv2.flip(img_posx, 1))
+                cv2.imwrite(path_decompose + 'negx' + format, img_negx)
+                cv2.imwrite(path_decompose + 'posy' + format, cv2.flip(img_posy, 0))
+                cv2.imwrite(path_decompose + 'negy' + format, img_negy)
+                cv2.imwrite(path_decompose + 'posz' + format, img_posz)
+                cv2.imwrite(path_decompose + 'negz' + format, cv2.flip(img_negz, 1))
                 print('Decomposed cubemap for', filename, 'saved')
