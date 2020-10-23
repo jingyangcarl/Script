@@ -7,7 +7,7 @@
 # This script is used to compose 6 sided skybos into one
 ###########################
 # Input Data Hierarchy:
-# ./SixSide
+# ./Cubemap_decomposed
 # ├───00
 # │       negx.jpg
 # │       negy.jpg
@@ -27,7 +27,7 @@
 # ...
 ###########################
 # Output Data Hierarchy:
-# ./SixSideCompose
+# ./Cubemap_composed
 # ├───00
 # │       skybox.jpg
 # │
