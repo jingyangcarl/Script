@@ -82,10 +82,13 @@ import json
 
 img_folder_path = '/home/ICT2000/jyang/Documents/Data/ForJing/renderedPhotos'
 cam_folder_path = '/home/ICT2000/jyang/Documents/Data/ForJing/arbitraryCameras_30_adjust'
+sh_folder_path = ''
 output_path = '/home/ICT2000/jyang/Documents/Data/ForJing'
 
-out_json = {}
-out_json['frames'] = []
+out_json = {
+    'frames': []
+}
+
 # walk through all images in img_path
 for r, d, f in os.walk(img_folder_path):
     for file in f:
@@ -138,8 +141,10 @@ for r, d, f in os.walk(img_folder_path):
                 # then the actual focal length should be 
                 # actual_focal_length = focal_length * ratio
 
-                def hwf2list():
-                    
+                def hwf2list(res, focal):
+                    # for all 1259 camera calibrations of given images, f_x == f_y
+                    focal = focal * 1400/5218
+                    return [1400, 935, focal[0]]
 
                 def transform2list(transform):
                     transform_list = []
@@ -149,8 +154,9 @@ for r, d, f in os.walk(img_folder_path):
 
                 out_json['frames'].append({
                     'file_path': os.path.join(r, file),
-                    'hwf': hwf2list(),
-                    'transform_matrix': transform2list(transform)
+                    'hwf': hwf2list(res, focal),
+                    'transform_matrix': transform2list(transform),
+                    'sh': ''
                 })
 
 # output to json
