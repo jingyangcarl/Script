@@ -1,4 +1,4 @@
-# CalibrationLookup2JSON
+# calibration_lookup2JSON_nerf
 ###########################
 # Environment
 # Python 3.7.4

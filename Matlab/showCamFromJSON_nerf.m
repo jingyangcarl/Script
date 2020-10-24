@@ -1,7 +1,46 @@
 function [transform_matrix_list, camera_list] = showCamFromJSON(f_name)
 %% showCamFromJSON.m - load transformation matrix from JSON and plot
 % Input:
+% f_name - json file path, where JSON has the following format
+% {
+%     "frames": [
+%         {
+%             "file_path": "path_to_frame",
+%             "transform_matrix": [
+%                 [
+%                     -0.7377411127090454,
+%                     -0.13523635268211365,
+%                     0.6613994240760803,
+%                     2.6661863327026367
+%                 ],
+%                 [
+%                     0.6750837564468384,
+%                     -0.14778819680213928,
+%                     0.7227866649627686,
+%                     2.9136462211608887
+%                 ],
+%                 [
+%                     -7.450580596923828e-09,
+%                     0.9797293543815613,
+%                     0.20032529532909393,
+%                     0.8075370788574219
+%                 ],
+%                 [
+%                     0.0,
+%                     0.0,
+%                     0.0,
+%                     1.0
+%                 ]
+%             ]
+%         },
+%         {
+%             ...
+%         }
+%     ]
+% }
+
 % Output:
+
 
 %Author: Jing Yang
 
@@ -22,7 +61,7 @@ camera_list = vision.graphics.Camera.empty;
 %% fill in data
 for i = 1:len
     file_path_list(i) = json_obj.frames(i).file_path;
-    rotation_list(i) = json_obj.frames(i).rotation;
+    %rotation_list(i) = json_obj.frames(i).rotation;
     transform_matrix_list(:,:,i) = json_obj.frames(i).transform_matrix;
 end
 
@@ -39,14 +78,12 @@ end
     % to r', since r is a orthogonal matrix;
 
 % show cam
-for i = 1:len
+colormap default;
+cmap = colormap;
+for i = 1:30
     t = transform_matrix_list(1:3,4,i)';
     r = quaternion(rotm2quat(transform_matrix_list(1:3,1:3,i))) * quaternion([0.0, 0.0, 1.0, 0.0]) * quaternion([0.0, 0.0, 0.0, 1.0]);
-    
-    colormap default;
-    cmap = colormap;
-    
-    camera_list(i) = plotCamera('Label', file_path_list(i), 'Location', t, 'Orientation', quat2rotm(r)', 'Size', 0.05, 'Color', cmap(round(i/len*size(cmap, 1)),:));
+    camera_list(i) = plotCamera('Label', int2str(int16(i)), 'Location', t, 'Orientation', quat2rotm(r)', 'Size', 5, 'Color', cmap(ceil(i/len*size(cmap, 1)),:));
     hold on;
 end
 
