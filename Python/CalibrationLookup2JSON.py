@@ -182,7 +182,8 @@ for r, d, f in os.walk(img_folder_path):
                     'transform_matrix': transform2list(transform),
                     'sh': sh2list(environ)
                 })
+                print('{}/{} is finished'.format(len(out_json['frames']), len(f)))
 
-                # output to json
-                with open('{}/transforms.json'.format(output_path), 'w') as out_file:
-                    json.dump(out_json, out_file, indent=4)
+# output to json
+with open('{}/transforms.json'.format(output_path), 'w') as out_file:
+    json.dump(out_json, out_file, indent=4)
