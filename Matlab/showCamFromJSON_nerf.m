@@ -80,7 +80,7 @@ end
 % show cam
 colormap default;
 cmap = colormap;
-for i = 1:10
+for i = 1:30
     t = transform_matrix_list(1:3,4,i)';
     r = quaternion(rotm2quat(transform_matrix_list(1:3,1:3,i))) * quaternion([0.0, 0.0, 1.0, 0.0]) * quaternion([0.0, 0.0, 0.0, 1.0]);
     camera_list(i) = plotCamera('Label', int2str(int16(i)), 'Location', t, 'Orientation', quat2rotm(r)', 'Size', 5, 'Color', cmap(ceil(i/len*size(cmap, 1)),:));
