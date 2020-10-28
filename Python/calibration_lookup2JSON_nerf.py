@@ -172,7 +172,7 @@ for r, d, f in os.walk(img_folder_path):
                         sh_txt = sh_file.read().strip()
                         sh = np.matrix(sh_txt.replace('\n', ';'))
                         sh_list = []
-                        for row in np.asarray(sh)[:4]:
+                        for row in np.asarray(sh)[:16]:
                             sh_list.append(row.tolist())
                         return sh_list
 
