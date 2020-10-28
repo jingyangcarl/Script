@@ -104,6 +104,7 @@ with open('{}/environment_in_order.txt'.format(sh_folder_path)) as sh_order_file
 
 # walk through all images in img_path
 for r, d, f in os.walk(img_folder_path):
+    f.sort()
     for file in f:
         if '.jpg' in file:
             # get file name
