@@ -1,12 +1,18 @@
 clear all;
+
 % hdr = hdrread('D:\data\lightProbe\Original\hdr\03-Ueno-Shrine_3k.hdr');
-png = imread('D:\data\lightProbe\Original\png\equirectangular\03-Ueno-Shrine_3k.jpg');
-% rgb = tonemap(hdr);
-rgb = double(png)/256;
+% png = imread('D:\data\lightProbe\Original\png\equirectangular\03-Ueno-Shrine_3k.jpg');
+png = im2double(imread('/home/ICT2000/jyang/Documents/Data/ForJing/lightProbe/Original/png/equirectangular/03-Ueno-Shrine_3k.jpg'));
+
+texture_mapping(png, 550);
+
+
+function texture_mapping(rgb, samples)
+
 [w,h,ch] = size(rgb);
 
 % use sphere to define vectors x, y, and z
-[X,Y,Z] = sphere(1000);
+[X,Y,Z] = sphere(samples);
 xyz = [X(:),Y(:),Z(:)];
 x = X(:); y = Y(:); z = Z(:);
 
@@ -31,6 +37,13 @@ b = b(sub2ind(size(b), m, n));
 c = [r g b];
 
 % create point cloud
-pc = pointCloud(xyz, 'Color', c);
-pcshow(pc);
+pcshow(pointCloud(xyz, 'Color', c));
 axis equal;
+
+end
+
+
+function texture_mapping_matlab(rgb, samples)
+
+
+end
