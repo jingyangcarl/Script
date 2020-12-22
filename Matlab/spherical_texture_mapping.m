@@ -7,6 +7,7 @@
 clear all;
 close all;
 img_path = '/home/ICT2000/jyang/Documents/Data/ForJing/lightProbe/Original/png/equirectangular/03-Ueno-Shrine_3k.jpg';
+img_path = 'D:/data/lightProbe/Original/png/equirectangular/03-Ueno-Shrine_3k.jpg';
 rgb = im2double(imread(img_path));
 
 % use sphere to define vectors x, y, and z
