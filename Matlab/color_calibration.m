@@ -1,8 +1,10 @@
 close all;
 clear all;
 
-img_path_source = 'C:\Users\jingy\Downloads\temp\52480650_0034_s_CUCAU1829024_0034_s.png';
-img_path_target = 'D:\data\lightstage\20201218_190044_orange_chelsea_stairs\CUCAU1829008_0000.tif';
+% img_path_source = 'C:\Users\jingy\Downloads\temp\52480650_0034_s_CUCAU1829024_0034_s_raw.png';
+img_path_source = 'D:\data\lightstage\20201218_171911_colorize_an_orange\temp1\52480650_0034_s_IMG_0009_s.png';
+% img_path_target = 'D:\data\lightstage\20201218_190044_orange_chelsea_stairs\CUCAU1829008_0000.tif';
+img_path_target = 'D:\data\lightstage\20201218_171911_colorize_an_orange\IMG_0009.CR2';
 
 img_source = imread(img_path_source);
 img_target = imread(img_path_target);
@@ -17,7 +19,7 @@ subplot(2,2,2);
 imshow(img_target);
 title('image target')
 
-colorchart_n = 4;
+colorchart_n = 12;
 colorchart_source = zeros(colorchart_n,3);
 colorchart_target = zeros(colorchart_n,3);
 
@@ -56,8 +58,11 @@ colorizer = colorchart_source \ colorchart_target;
 % ps: img_source is uint8 and img_target is uint16
 img_source = reshape(img_source,[],3);
 img_target = reshape(img_target,[],3);
-img_s2t = uint16(reshape(double(img_source) * colorizer, [], size_source(2),3));
+img_s2t = uint8(reshape(double(img_source) * colorizer, [], size_source(2),3));
 img_t2s = uint8(reshape(double(img_target) / colorizer, [], size_target(2),3));
+
+% img_s2t = uint8(reshape(double(img_s2t) / colorizer, [], size_source(2), 3));
+% img_t2s = uint8(reshape(double(img_t2s) * colorizer, [], size_target(2), 3));
 
 subplot(2,2,3);
 imshow(img_s2t);

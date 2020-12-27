@@ -7,19 +7,63 @@
 clear all;
 close all;
 img_path = '/home/ICT2000/jyang/Documents/Data/ForJing/lightProbe/Original/png/equirectangular/03-Ueno-Shrine_3k.jpg';
-img_path = 'D:/data/lightProbe/Original/png/equirectangular/03-Ueno-Shrine_3k.jpg';
+img_path = 'D:/data/lightProbe/Original/png/equirectangular/skyline_02_stitch_v001_3_5k_Ref.jpg';
 rgb = im2double(imread(img_path));
-
-% use sphere to define vectors x, y, and z
-[X,Y,Z] = sphere(1000);
 
 % compare different implementation
 subplot(1, 2, 1);
+[X,Y,Z] = pcloud_sphere_init(rgb, 100);
+texture_mapping(rgb, X,Y,Z);
 title('implementation');
-texture_mapping(rgb, X, Y, Z);
 subplot(1, 2, 2);
-title('matlab api');
+[X,Y,Z] = pcloud_sphere_init_api(1000);
 texture_mapping_api(rgb, X, Y, Z);
+title('matlab api');
+
+%% pcloud_sphere_init
+% Description: this function is used to generate a point cloud in spherical
+% shape from the size of texture map, where density of the points is
+% controlled by the step
+% Reference: 
+% @ https://en.wikipedia.org/wiki/Spherical_coordinate_system
+
+% Input:
+% @ rgb: equirectangular environmental map
+% @ step: step of sampling on rgb map
+% Output:
+% @ X: Cartesian coordinates x
+% @ Y: Cartesian coordinates y
+% @ Z: Cartesian coordinates z
+function [X, Y, Z] = pcloud_sphere_init(rgb, step)
+% get uv coordinates
+[h,w,~] = size(rgb);
+u = ((1:step:w)/w)';
+v = ((1:step:h)/h)';
+
+% get spherical coordinates
+r = 1;
+phi = (u-0.5) * 2*pi;
+theta = v * pi;
+
+% spherical coordinates to cartesian coordinates
+X = r .* sin(theta) .* cos(phi)';
+Y = r .* sin(theta) .* sin(phi)';
+Z = r .* cos(theta) .* ones(size(phi))';
+end
+
+%% pcloud_sphere_init_api
+% Description: this function is used to generate a point cloud in spherical
+% shape by indicating the number of points on the sphere
+
+% Input:
+% @ num: the number of points on the sphere
+% Output:
+% @ X: Cartesian coordinates x
+% @ Y: Cartesian coordinates y
+% @ Z: Cartesian coordinates z
+function [X, Y, Z] = pcloud_sphere_init_api(num)
+[X, Y, Z] = sphere(num);
+end
 
 %% texture_mapping
 % Description: this function is used to implement mapping from Cartesian
@@ -34,7 +78,6 @@ texture_mapping_api(rgb, X, Y, Z);
 % @ Z: Cartesian coordinates z
 % Output:
 % @ a visualiation of a colored point cloud
-
 function texture_mapping(rgb, X, Y, Z)
 [h,w,~] = size(rgb);
 x = X(:); y = Y(:); z = Z(:);
@@ -76,7 +119,6 @@ end
 % @ Z: Cartesian coordinates z
 % Output:
 % @ a visualiation of a colored point cloud
-
 function texture_mapping_api(rgb, X, Y, Z)
 tex = flipud(imresize(rgb, size(X)));
 pcshow([X(:),Y(:),Z(:)], reshape(tex, [], 3));
