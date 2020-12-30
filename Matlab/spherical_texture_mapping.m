@@ -6,16 +6,23 @@
 
 clear all;
 close all;
-img_path = '/home/ICT2000/jyang/Documents/Data/ForJing/lightProbe/Original/png/equirectangular/03-Ueno-Shrine_3k.jpg';
-img_path = 'D:/data/lightProbe/Original/png/equirectangular/skyline_02_stitch_v001_3_5k_Ref.jpg';
+% img_path = 'D:/data/lightProbe/Original/png/equirectangular/Bunker_04_Ref.jpg';
+img_path = 'D:/data/lightProbe/Original/png/equirectangular/Chelsea_Stairs_3k.jpg';
+% img_path = 'D:/data/lightProbe/Original/png/equirectangular/Factory_Catwalk_2k.jpg';
+% img_path = 'D:/data/lightProbe/Original/png/equirectangular/GCanyon_C_YumaPoint_3k.jpg';
+% img_path = 'D:/data/lightProbe/Original/png/equirectangular/glacier.jpg';
+% img_path = 'D:/data/lightProbe/Original/png/equirectangular/Harbour_2_Ref.jpg';
 rgb = im2double(imread(img_path));
 
 % compare different implementation
-subplot(1, 2, 1);
-[X,Y,Z] = pcloud_sphere_init(rgb, 100);
+subplot(1, 3, 1);
+[X,Y,Z] = pcloud_sphere_init(rgb, 50);
 texture_mapping(rgb, X,Y,Z);
 title('implementation');
-subplot(1, 2, 2);
+subplot(1, 3, 2);
+texture_mapping_easy(rgb, 50);
+title('implementation easy');
+subplot(1, 3, 3);
 [X,Y,Z] = pcloud_sphere_init_api(1000);
 texture_mapping_api(rgb, X, Y, Z);
 title('matlab api');
@@ -67,7 +74,7 @@ end
 
 %% texture_mapping
 % Description: this function is used to implement mapping from Cartesian
-% coordinates to spherical coordinates and to uv coordinates.
+% coordinates to spherical coordinates and to uv coordinates for color reference.
 % Reference: 
 % @ https://en.wikipedia.org/wiki/Spherical_coordinate_system
 
@@ -104,6 +111,35 @@ c = [r g b];
 
 % create point cloud
 pcshow(pointCloud([X(:),Y(:),Z(:)], 'Color', c));
+end
+
+%% texture_mapping_easy
+% Description: this function is used to implement mapping from a single
+% texture image onto a sphere point cloud.
+
+% Input:
+% @ rgb: equirectangular environmental map
+% @ step: step of sampling on rgb map
+% Output:
+% @ a visualiation of a colored point cloud
+function texture_mapping_easy(rgb, step)
+% get uv coordinates
+[h,w,~] = size(rgb);
+u = ((1:step:w)/w)';
+v = ((1:step:h)/h)';
+
+% get spherical coordinates
+r = 1;
+phi = (u-0.5) * 2*pi;
+theta = v * pi;
+
+% spherical coordinates to cartesian coordinates
+X = r .* sin(theta) .* cos(phi)';
+Y = r .* sin(theta) .* sin(phi)';
+Z = r .* cos(theta) .* ones(size(phi))';
+
+c = rgb(1:step:h, 1:step:w,:);
+pcshow(pointCloud([X(:), Y(:), Z(:)], 'Color', reshape(c, [], 3)));
 end
 
 %% texture_mapping_api
