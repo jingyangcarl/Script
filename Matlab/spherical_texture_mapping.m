@@ -20,6 +20,7 @@ close all;
 % img_path = 'D:/data/lightProbe/Original/hdr/glacier.hdr';
 img_path = 'D:/data/lightProbe/Original/hdr/Harbour_2_Ref.hdr';
 
+% read image based on file type
 if contains(img_path, 'hdr')
     rgb = hdrread(img_path);
     gain = 1.0;
@@ -201,6 +202,16 @@ pcshow([scalar*X(:),scalar*Y(:),scalar*Z(:)], reshape(tex, [], 3));
 end
 
 %% rendering
+% Description: this function is used to render a sphere as well as it's
+% color based on diffuse rendering equation for direct light
+
+% Input:
+% @ X: Cartesian coordinates x
+% @ Y: Cartesian coordinates y
+% @ Z: Cartesian coordinates z
+% @ c: color value corresponding to XYZ
+% Output:
+% @ a visualiation of a colored point cloud
 function shading(X,Y,Z, c)
 [x,y,z] = sphere(200);
 norm = [x(:),y(:),z(:)];
