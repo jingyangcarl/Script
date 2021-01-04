@@ -7,25 +7,52 @@
 clear all;
 close all;
 % img_path = 'D:/data/lightProbe/Original/png/equirectangular/Bunker_04_Ref.jpg';
-img_path = 'D:/data/lightProbe/Original/png/equirectangular/Chelsea_Stairs_3k.jpg';
+% img_path = 'D:/data/lightProbe/Original/png/equirectangular/Chelsea_Stairs_3k.jpg';
 % img_path = 'D:/data/lightProbe/Original/png/equirectangular/Factory_Catwalk_2k.jpg';
 % img_path = 'D:/data/lightProbe/Original/png/equirectangular/GCanyon_C_YumaPoint_3k.jpg';
 % img_path = 'D:/data/lightProbe/Original/png/equirectangular/glacier.jpg';
 % img_path = 'D:/data/lightProbe/Original/png/equirectangular/Harbour_2_Ref.jpg';
-rgb = im2double(imread(img_path));
+
+% img_path = 'D:/data/lightProbe/Original/hdr/Bunker_04_Ref.hdr';
+% img_path = 'D:/data/lightProbe/Original/hdr/Chelsea_Stairs_3k.hdr'; % too much brigher
+% img_path = 'D:/data/lightProbe/Original/hdr/Factory_Catwalk_2k.hdr';
+% img_path = 'D:/data/lightProbe/Original/hdr/GCanyon_C_YumaPoint_3k.hdr';
+% img_path = 'D:/data/lightProbe/Original/hdr/glacier.hdr';
+img_path = 'D:/data/lightProbe/Original/hdr/Harbour_2_Ref.hdr';
+
+if contains(img_path, 'hdr')
+    rgb = hdrread(img_path);
+    gain = 1.0;
+    gamma = 2.2;
+    rgb = min(gain * (rgb.^gamma), 5);
+elseif contains(img_path, 'jpg')
+    rgb = im2double(imread(img_path));
+end
 
 % compare different implementation
 subplot(1, 3, 1);
-[X,Y,Z] = pcloud_sphere_init(rgb, 50);
+[X,Y,Z] = pcloud_sphere_init(rgb, 20);
 texture_mapping(rgb, X,Y,Z);
 title('implementation');
+xlabel('X');
+ylabel('Y');
+zlabel('Z');
+
 subplot(1, 3, 2);
-texture_mapping_easy(rgb, 50);
+u_rot = -90/360;
+texture_mapping_easy(rgb, 20, u_rot);
 title('implementation easy');
+xlabel('X');
+ylabel('Y');
+zlabel('Z');
+
 subplot(1, 3, 3);
 [X,Y,Z] = pcloud_sphere_init_api(1000);
 texture_mapping_api(rgb, X, Y, Z);
 title('matlab api');
+xlabel('X');
+ylabel('Y');
+zlabel('Z');
 
 %% pcloud_sphere_init
 % Description: this function is used to generate a point cloud in spherical
@@ -49,7 +76,7 @@ v = ((1:step:h)/h)';
 
 % get spherical coordinates
 r = 1;
-phi = (u-0.5) * 2*pi;
+phi = (u) * 2*pi;
 theta = v * pi;
 
 % spherical coordinates to cartesian coordinates
@@ -110,7 +137,12 @@ b = b(sub2ind(size(b), n, m));
 c = [r g b];
 
 % create point cloud
-pcshow(pointCloud([X(:),Y(:),Z(:)], 'Color', c));
+scalar = 5;
+pcshow(pointCloud([scalar*x,scalar*y,scalar*z], 'Color', c));
+
+% rendering diffuse light
+hold on;
+shading(x,y,z, c);
 end
 
 %% texture_mapping_easy
@@ -122,7 +154,7 @@ end
 % @ step: step of sampling on rgb map
 % Output:
 % @ a visualiation of a colored point cloud
-function texture_mapping_easy(rgb, step)
+function texture_mapping_easy(rgb, step, u_rot)
 % get uv coordinates
 [h,w,~] = size(rgb);
 u = ((1:step:w)/w)';
@@ -130,16 +162,23 @@ v = ((1:step:h)/h)';
 
 % get spherical coordinates
 r = 1;
-phi = (u-0.5) * 2*pi;
-theta = v * pi;
+phi = (u+0.5+u_rot) * 2*pi; % (-pi,pi], azimuth
+theta = v * pi; % [0,pi], inclination
 
 % spherical coordinates to cartesian coordinates
 X = r .* sin(theta) .* cos(phi)';
 Y = r .* sin(theta) .* sin(phi)';
 Z = r .* cos(theta) .* ones(size(phi))';
 
+% rendering mapped texture
 c = rgb(1:step:h, 1:step:w,:);
-pcshow(pointCloud([X(:), Y(:), Z(:)], 'Color', reshape(c, [], 3)));
+c = reshape(c, [], 3);
+scalar = 5;
+pcshow(pointCloud([scalar*X(:), scalar*Y(:), scalar*Z(:)], 'Color', reshape(c, [], 3)));
+
+% rendering diffuse light
+hold on;
+shading(X,Y,Z, c);
 end
 
 %% texture_mapping_api
@@ -157,5 +196,17 @@ end
 % @ a visualiation of a colored point cloud
 function texture_mapping_api(rgb, X, Y, Z)
 tex = flipud(imresize(rgb, size(X)));
-pcshow([X(:),Y(:),Z(:)], reshape(tex, [], 3));
+scalar = 5;
+pcshow([scalar*X(:),scalar*Y(:),scalar*Z(:)], reshape(tex, [], 3));
+end
+
+%% rendering
+function shading(X,Y,Z, c)
+[x,y,z] = sphere(200);
+norm = [x(:),y(:),z(:)];
+l_dir = [X(:),Y(:),Z(:)];
+l_color = reshape(c, [], 3);
+nDotL = max(norm * l_dir', 0);
+light_diffuse = 5.0 * (nDotL * l_color) / (size(l_color,1));
+pcshow(pointCloud([x(:),y(:),z(:)],'Color', light_diffuse));
 end
