@@ -24,7 +24,7 @@ img_path = 'D:/data/lightProbe/Original/hdr/Harbour_2_Ref.hdr';
 if contains(img_path, 'hdr')
     rgb = hdrread(img_path);
     gain = 1.0;
-    gamma = 2.2;
+    gamma = 1.5;
     rgb = min(gain * (rgb.^gamma), 5);
 elseif contains(img_path, 'jpg')
     rgb = im2double(imread(img_path));
@@ -32,7 +32,7 @@ end
 
 % compare different implementation
 subplot(1, 3, 1);
-[X,Y,Z] = pcloud_sphere_init(rgb, 20);
+[X,Y,Z] = pcloud_sphere_init(rgb, 100);
 texture_mapping(rgb, X,Y,Z);
 title('implementation');
 xlabel('X');
@@ -41,7 +41,7 @@ zlabel('Z');
 
 subplot(1, 3, 2);
 u_rot = -90/360;
-texture_mapping_easy(rgb, 20, u_rot);
+texture_mapping_easy(rgb, 100, u_rot);
 title('implementation easy');
 xlabel('X');
 ylabel('Y');
@@ -173,7 +173,8 @@ Z = r .* cos(theta) .* ones(size(phi))';
 
 % rendering mapped texture
 c = rgb(1:step:h, 1:step:w,:);
-c = reshape(c, [], 3);
+c_w = repmat(sin(theta), 1,size(c,2)); % sin(((1:step:h)/h)'*pi), used to equalize light distribution
+c = reshape(c.*c_w, [], 3);
 scalar = 5;
 pcshow(pointCloud([scalar*X(:), scalar*Y(:), scalar*Z(:)], 'Color', reshape(c, [], 3)));
 
