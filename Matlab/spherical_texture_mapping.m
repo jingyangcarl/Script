@@ -25,7 +25,7 @@ if contains(img_path, 'hdr')
     rgb = hdrread(img_path);
     gain = 1.0;
     gamma = 1.5;
-    rgb = min(gain * (rgb.^gamma), 5);
+    rgb = min(gain * (rgb.^gamma), 10);
 elseif contains(img_path, 'jpg')
     rgb = im2double(imread(img_path));
 end
