@@ -1,0 +1,30 @@
+// get_xform
+//////////////////////
+// Environment:
+// Maya 2018;
+//////////////////////
+// Description:
+// This script is used to print transformation of several selected object in Maya;
+//////////////////////
+// Input Data Hierarchy:
+// ./Presentation_003.mb
+// Output Data Hierarchy:
+// ./
+//////////////////////
+
+for ($i = 1; $i <= 40; $i++) {
+    $camName = "camera"+$i;
+
+    // select objects
+    select -r $camName;
+    print($camName + "\n");
+
+    // rotation
+    // xform -q -ro;
+
+    // translation
+    // xform -q -t;
+
+    // transformation matrix
+    print(`xform -q -m`);
+}

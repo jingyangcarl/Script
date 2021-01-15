@@ -1,4 +1,4 @@
-# calibration_lookup2JSON_nerf
+# calibration_lookup2json_nerf
 ###########################
 # Environment
 # Python 3.7.4
@@ -78,6 +78,8 @@
 #                     0.0,
 #                     1.0
 #                 ]
+#             ],
+#             "sh":[
 #             ]
 #         },
 #         {
