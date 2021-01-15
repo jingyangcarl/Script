@@ -53,7 +53,7 @@ with open(file_transform_path) as file_transform:
 entry_len = 17
 for index in range(round(len(transforms_txt) / entry_len)):
     name = transforms_txt[index]
-    focal = 35
+    focal = 2620.5209560074
     res = [800, 800]
     transform = np.matrix('{} {} {} {}; {} {} {} {}; {} {} {} {}; {} {} {} {}'.format(
         transforms_txt[index*entry_len+1], transforms_txt[index*entry_len+2], transforms_txt[index*entry_len+3], transforms_txt[index*entry_len+4], 
@@ -66,7 +66,7 @@ for index in range(round(len(transforms_txt) / entry_len)):
 
     def transform2list(transform):
         transform_list = []
-        for row in np.asarray(transform):
+        for row in np.asarray(transform.T):
             transform_list.append(row.tolist())
         return transform_list
 
