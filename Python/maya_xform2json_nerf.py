@@ -80,7 +80,7 @@ for index in range(round(len(transforms_txt) / entry_len)):
             return sh_list
 
     out_json['frames'].append({
-        'file_path': './unclassified/rendered_{}'.format(index),
+        'file_path': './unclassified/rendered_{}'.format(index+1),
         'hwf': hwf2list(res, focal),
         'transform_matrix': transform2list(transform),
         'sh': sh2list('Bunker_04_Ref')

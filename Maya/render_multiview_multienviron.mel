@@ -1,21 +1,45 @@
-
-
+$light_count = 1;
+$cam_count = 1;
 
 // set rendering devices to GPU
-setAttr "defaultArnoldRenderOptions.renderDevice" 1;
+setAttr "defaultArnoldRenderOptions.renderDevice" 1; // 1 for gpu;
+setAttr "defaultRenderGlobals.imageFormat" 32; // 32 for png;
+setAttr "defaultResolution.height" 200;
+setAttr "defaultResolution.width" 200;
 
 string $outputFolder = "D:/Marcel/rendered/";
+sysFile -makeDir $outputFolder;
 
-for ($i = 1; $i <= 40; $i++) {
-    // render from give camera using Arnold
-    $camName = "camera"+$i;
-    arnoldRender -cam $camName;
-
-    // save out image
-    $fileName = $outputFolder + "rendered_" + $i;
-    $editorName = "renderView";
-    $format = 32; // 32 for png
-    $viewTransformName = "sRGB gamma";
-    setAttr defaultRenderGlobals.imageFormat $format;
-    renderWindowEditor -edit -colorManage -viewTransformName $viewTransformName -writeImage $fileName $editorName;
+// hide all lights
+for($j = 1; $j <= $light_count; $j++) {
+    string $skyDomeName = "aiSkyDomeLight" + $j;
+    hide $skyDomeName;
 }
+
+for($l = 1; $l <= $light_count; $l++) {
+    // get current light
+    string $lightName = "light_" + $l + "/";
+    string $lightFolder = $outputFolder + $lightName;
+    sysFile -makeDir $lightFolder;
+
+    // show skydome
+    string $skyDomeName = "aiSkyDomeLight" + $l;
+    showHidden $skyDomeName;
+
+    // render each views
+    for ($i = 1; $i <= $cam_count; $i++) {
+        // render from give camera using Arnold
+        $camName = "camera"+$i;
+        arnoldRender -cam $camName;
+
+        // save out image
+        $fileName = $lightFolder + "rendered_" + $i;
+        $editorName = "renderView";
+        renderWindowEditor -edit -colorManage -viewTransformName "sRGB gamma" -writeImage $fileName $editorName;
+        // PS: need to open render view to have output gamma correct
+    }
+
+    // hide skydome
+    hide $skyDomeName;
+}
+
