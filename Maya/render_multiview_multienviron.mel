@@ -1,5 +1,8 @@
+// PS: need to open render view to have output gamma correct
+// PS: need to open render view to have output gamma correct
+// PS: need to open render view to have output gamma correct
 $light_count = 1;
-$cam_count = 1;
+$cam_count = 40;
 
 // set rendering devices to GPU
 setAttr "defaultArnoldRenderOptions.renderDevice" 1; // 1 for gpu;
@@ -7,7 +10,7 @@ setAttr "defaultRenderGlobals.imageFormat" 32; // 32 for png;
 setAttr "defaultResolution.height" 200;
 setAttr "defaultResolution.width" 200;
 
-string $outputFolder = "D:/Marcel/rendered/";
+string $outputFolder = "D:/data/Marcel/rendered/";
 sysFile -makeDir $outputFolder;
 
 // hide all lights
@@ -42,4 +45,3 @@ for($l = 1; $l <= $light_count; $l++) {
     // hide skydome
     hide $skyDomeName;
 }
-
