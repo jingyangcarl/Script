@@ -38,12 +38,23 @@ import os
 import numpy as np
 import json
 
-
-sh_folder_path = 'D:/data/lightProbe/Original/png/spherical_harmonics'
 file_transform_path = 'D:/Marcel/transforms_raw.txt'
-output_path = 'D:/Marcel'
+sh_folder_path = 'D:/data/lightProbe/Original/png/spherical_harmonics'
+sh_name = 'Chelsea_Stairs_3k'
 
+index_test = [10, 14, 16]
+index_val = [12, 18, 20]
+output_path = 'D:/data/Marcel/rendered'
 out_json = {
+    'frames': []
+}
+out_json_test = {
+    'frames': []
+}
+out_json_val = {
+    'frames': []
+}
+out_json_train = {
     'frames': []
 }
 
@@ -53,8 +64,9 @@ with open(file_transform_path) as file_transform:
 entry_len = 17
 for index in range(round(len(transforms_txt) / entry_len)):
     name = transforms_txt[index]
-    focal = 2620.5209560074
+    angle_of_view = 50. / 180. * np.pi
     res = [800, 800]
+    focal = .5 * res[0] / np.tan(.5 * angle_of_view)
     transform = np.matrix('{} {} {} {}; {} {} {} {}; {} {} {} {}; {} {} {} {}'.format(
         transforms_txt[index*entry_len+1], transforms_txt[index*entry_len+2], transforms_txt[index*entry_len+3], transforms_txt[index*entry_len+4], 
         transforms_txt[index*entry_len+5], transforms_txt[index*entry_len+6], transforms_txt[index*entry_len+7], transforms_txt[index*entry_len+8], 
@@ -80,12 +92,39 @@ for index in range(round(len(transforms_txt) / entry_len)):
             return sh_list
 
     out_json['frames'].append({
-        'file_path': './unclassified/rendered_{}'.format(index+1),
+        'file_path': './unclassified/{}/rendered_{}'.format(sh_name, index+1),
         'hwf': hwf2list(res, focal),
         'transform_matrix': transform2list(transform),
-        'sh': sh2list('Bunker_04_Ref')
+        'sh': sh2list(sh_name)
     })
+    if index+1 in index_test:
+        out_json_test['frames'].append({
+            'file_path': './unclassified/{}/rendered_{}'.format(sh_name, index+1),
+            'hwf': hwf2list(res, focal),
+            'transform_matrix': transform2list(transform),
+            'sh': sh2list(sh_name)
+        })
+    elif index+1 in index_val:
+        out_json_val['frames'].append({
+            'file_path': './unclassified/{}/rendered_{}'.format(sh_name, index+1),
+            'hwf': hwf2list(res, focal),
+            'transform_matrix': transform2list(transform),
+            'sh': sh2list(sh_name)
+        })
+    else:
+        out_json_train['frames'].append({
+            'file_path': './unclassified/{}/rendered_{}'.format(sh_name, index+1),
+            'hwf': hwf2list(res, focal),
+            'transform_matrix': transform2list(transform),
+            'sh': sh2list(sh_name)
+        })
 
 # output to json
-with open('{}/transforms.json'.format(output_path), 'w') as out_file:
+with open('{}/{}/transforms.json'.format(output_path, sh_name), 'w') as out_file:
     json.dump(out_json, out_file, indent=4)
+with open('{}/{}/transforms_test.json'.format(output_path, sh_name), 'w') as out_file_test:
+    json.dump(out_json_test, out_file_test, indent=4)
+with open('{}/{}/transforms_val.json'.format(output_path, sh_name), 'w') as out_file_val:
+    json.dump(out_json_val, out_file_val, indent=4)
+with open('{}/{}/transforms_train.json'.format(output_path, sh_name), 'w') as out_file_train:
+    json.dump(out_json_train, out_file_train, indent=4)
